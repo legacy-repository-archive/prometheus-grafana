@@ -81,7 +81,25 @@ Pushgateway 는 배치 job에서 가장 최근에 push한 메트릭을 지정한
 
 Remote Read는 달느 시스템(장기 스토리지)에서 시계열 데이터를 알아서 읽어와 질의해주는 프로메테우스 기능이다.   
 
-## 
+## Remote Read Adapter 
+  
+모든 시스템이 직접 remote read를 지원하는 건 아니다.    
+remote read adapter 는 프로메테우스와 다른 시스템 사이에 위치해서, 이 둘간의 시계열 요청/응답을 변환해준다.    
+
+## Remote Read EndPoint.  
+
+remote read 엔드 포인트는 프로메테우스가 remote read 를 수행할 때, 대화를 나누는 대상이다.  
+
+## Remote Write
+
+Remote Write는 수집한 샘플을 장기 스토리지 같은 다른 시스템으로 즉시 전송해주는 프로메테우스 기능이다.   
+
+## Remote Write Adapter 
+
+모든 시스템이 직접 remote writer 를 지원하는 것은 아니다.      
+remote writer adapter 는 프로메테우스와 다른 시스템 사이에 위치해서,       
+원격으로 전송할 샘플들을 다른 시스템이 이해할 수 있는 형식으로 변환해준다.      
+
 
 
 
