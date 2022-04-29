@@ -105,7 +105,7 @@ http://localhost:9090/metrics 로 접근해보면 프로메테우스가 자체 �
 http://localhost:9090/graph 로 이동해서 "graph" 탭에 있는 "Table" 뷰를 클릭하자   
  
 http://localhost:9090/metrics 에서도 확인할 수 있듯이.  
-프로메테우스가 자체적으로 내보내는 메트릭에는 
+프로메테우스가 자체적으로 내보내는 메트릭에는   
 `promhttp_metric_handler_requests_total`(프로메테우스 서버가 /metrics 요청을 서빙한 횟수) 메트릭이 있다.  
 
 
