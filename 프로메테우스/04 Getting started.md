@@ -69,9 +69,22 @@ http://localhost:9090/metrics 에서도 확인할 수 있듯이
 prometheus_target_interval_length_seconds
 ```
 표현식 콘솔을 위와 같이 입력하고 "Execute"를 클릭해보자.   
-이렇게 하면 `prometheus_target_interval_length_seconds`란 이름을 가진 시계열이 반환 될건데, 레이블은 모두 다를거다.
-(시계열 데이터마다 최신 기록 값을 가지고 있다.)    
-이 레이블들은 각자 다른 지연 시간 백분위수와 타겟 그룹의 interval을 나타낸다.   
+이렇게 하면 `prometheus_target_interval_length_seconds`란 이름을 가진 시계열이 반환 될건데, 레이블은 모두 다를거다.   
+(시계열 데이터마다 최신 기록 값을 가지고 있다.)      
+이 레이블들은 각자 다른 지연 시간 백분위수와 타겟 그룹의 interval을 나타낸다.     
+
+```
+prometheus_target_interval_length_secondes{quantile="0.99"}.   
+``` 
+99번째 백분위수에만 관심이 있다면 위 쿼리로 검색하면 된다.   
+
+```
+count(promethes_target_interval_length_seconds)
+```.  
+반환된 시계열의 갯수는 위와 같이 조회할 수 있다.    
+표현식 언어에 대한 자세한 내용은 표현식 언어 문서를 참고하자(PromQL).   
+
+
 
 
 
