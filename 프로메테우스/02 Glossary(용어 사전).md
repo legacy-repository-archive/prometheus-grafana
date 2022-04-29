@@ -100,10 +100,21 @@ Remote Write는 수집한 샘플을 장기 스토리지 같은 다른 시스템�
 remote writer adapter 는 프로메테우스와 다른 시스템 사이에 위치해서,       
 원격으로 전송할 샘플들을 다른 시스템이 이해할 수 있는 형식으로 변환해준다.      
 
+## Remote Wrte Endpoint    
 
+remote write endpoint 는 프로메테우스가 remote write 를 수행할 때 대화를 나누는 대상이다.  
 
+## Sample.  
 
+샘플은 시계열 안에서 특정 시점에 존재하는 단일 값을 의미한다.   
+프로메테우스에서 각 샘플은 float64 값과 밀리초 단위 정밀도를 가진 타임스탬프로 구성된다.    
 
+## Slience
 
+Alertmanager 의 slience 기능은 매칭되는 레이블을 가진 alert 를 통보에서 제외시킨다.   
 
+## Target
+
+타겟은 스크랩할 객체를 정의한다.  
+예를 들어 적용할 레이블이나, 연결에 필요한 모든 인증, 스크랩 방식을 정의하는 기타 정보들을 가지고 있다.   
 
