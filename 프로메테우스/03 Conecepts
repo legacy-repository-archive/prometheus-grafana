@@ -28,13 +28,30 @@
 
 메트릭과 레이블 이름에 대한 [베스트 프랙티스](https://godekdls.github.io/Prometheus/practices.naming/)   
 
+### Samples 
+
+샘플들이 모여 실제 시계열 데이터를 형성한다.   
+각 샘플은 다음과 같이 구성된다.  
+
+* float64 값 하나 
+* 밀리세컨드 단위 타임스탬프 하나 
 
 
+### Notation
 
+메트릭 이름과 레이블 셋이 있을 땐, 흔히 아래와 같은 표기법을 통해 시계열 데이터를 식별한다.   
 
+```
+<metric name>{<label name>=<label value>, ...}
+```
 
+메트릭 이름이 `api_http_request_total`이고,    
+`metho="POST"`, `handler="/messages`를 레이블로 가지고 있는 시계열은 다음과 같이 작성할 수 있다.   
 
-
+```
+api_http_requests_total{method="POST", handler="/messages"}. 
+``` 
+이 표기법은 [OpenTSDB](http://opentsdb.net/) 에서 사용하는 것과 같은 표기법이다.    
 
 ## Metric Types   
 
