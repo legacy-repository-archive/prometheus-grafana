@@ -60,7 +60,7 @@ scrape_configs:
   
 프로메테우스가 자체적으로 수집한 데이터를 살펴보자     
 프로메테우스의 내장 expression 브라우저를 사용하려면      
-http://localhost:9090/graph 로 이동해서 "Graph" 탭의 "Console"뷰를 클릭하자    
+http://localhost:9090/graph 로 이동해서 "Graph" 탭의 "Table" 뷰를 클릭하자    
 
 http://localhost:9090/metrics 에서도 확인할 수 있듯이   
 프로메테우스가 자체적으로 내보내는 메트릭 중에는 `prometheus_target_interval_length_seconds` 라는 메트릭이 있다.  
@@ -80,12 +80,35 @@ prometheus_target_interval_length_secondes{quantile="0.99"}.
 
 ```
 count(promethes_target_interval_length_seconds)
-```.  
+```  
 반환된 시계열의 갯수는 위와 같이 조회할 수 있다.    
 표현식 언어에 대한 자세한 내용은 표현식 언어 문서를 참고하자(PromQL).   
 
 
+## Using the graphing interface 
 
+표현식을 그래프로 보려면 http://localhost:9090/graph 로 이동해서 "Graph" 탭의 "Graph" 뷰를 클릭하자      
+
+```
+rate(prometheus_tsdb_head_chunks_created_total[1m])
+```
+예시로 프로메테우스 지표에서, 생성하는 청크 수를 초 단위로 그려보면 위와 같은 표현식을 입력하면 된다.    
+그래프 range 파라미터나 다른 설정으로 여러가지 실험을 해봐도 좋다.    
+
+## Starting up some sample targets 
+
+프로메테우스가 스크랩할 타겟을 더 주가해보자.    
+타겟 예시로 노드 익스포터를 사용할 예정이다.(자세한 사용법은 [가이드 참고](https://godekdls.github.io/Prometheus/guides.node-exporter/)) 
+
+```
+tar -xzvf node_exporter-*.*.tar.gz
+cd node_exporter-*.*
+
+# 별도 터미널에서 샘플 타겟을 3벌 시작한다
+./node_exporter --web.listen-address 127.0.0.1:8080
+./node_exporter --web.listen-address 127.0.0.1:8081
+./node_exporter --web.listen-address 127.0.0.1:8082
+```
 
 
 
