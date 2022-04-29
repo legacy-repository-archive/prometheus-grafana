@@ -93,12 +93,17 @@ api_http_requests_total{method="POST", handler="/messages"}.
 * `<basename>_bucket{ie="+Inf"}`와 동일 
 
 
-
-
-
 ### Summary
 
+히스토그램과 유사하게 summary 도 관측 결과를 샘플링한다.(보통 요청 지속 시간이나 응답 크기 같은 것들)      
+마찬가지로 총 관측 횟수와 관측한 모든 값들의 함계를 제공하지만, sumamry는 슬라이딩 time 윈도우를 통해 설정해둔 분위수를 계산한다.   
+ 
+summary를 스크랩하면 여러가지 시계열을 노출하게 된다.      
+`<basename>`을 메트릭 이름으로 가진 summary는 다음과 같은 데이터를 노출한다.   
 
+* `<basename>{quantile="<~>"}` 노출하는, 관찰한 이벤트들의 스트리밍 
+* `<basename>_sum`을 노출하느, 모든 관측 값들의 총합 
+* `<basename>_count`로 노출하는, 관찰한 이벤트의 갯수 
 
 
 ## Jobs and Instances
