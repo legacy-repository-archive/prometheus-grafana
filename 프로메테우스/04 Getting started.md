@@ -110,7 +110,37 @@ cd node_exporter-*.*
 ./node_exporter --web.listen-address 127.0.0.1:8082
 ```
 
+이제 `127.0.0.1:8080`, `127.0.0.1:8081`, `127.0.0.1:8082` 에서 메트릭을 수집할 수 있게 되었다.  
+즉, `/metrics`로 수신 가능한 샘플 타겟이 더 생겼다.  
 
+## Cofiguration Prometheus to monitor the sample targets 
+
+타겟이 생겼지만 아직 프로메테우스에서 수집한다는 설정을 하지 않았다.     
+
+```yml
+scrape_configs:
+  - job_name:       'node'
+
+    # 글로벌로 설정해둔 기본값을 재정의하며, 이 job에선 타겟을 5초 간격으로 스크랩한다.
+    scrape_interval: 5s
+
+    static_configs:
+      - targets: ['localhost:8080', 'localhost:8081']
+        labels:
+          group: 'production'
+
+      - targets: ['localhost:8082']
+        labels:
+          group: 'canary'
+```
+3개의 익스포터를 기준으로 하나의 'node' 라는 잡을 만들었다.    
+처음 두 엔드포인트는 프로덕션 타겟, 세번째 엔드포인트는 카나리 인스턴스라고 가정한다.     
+
+프로메테우스에서 이 구조를 모델링할 땐,   
+단일 job 엔드포인트 그룹을 여러개 추가하고 타겟 그룹마다 별도 레이블을 추가해주면 된다.    
+
+설정을 완료하고, expression 브라우저로 돌아가보자.   
+이제 프로메테우스에 위 예제 엔드포인트들에서 노출하는 시계열 정보가 있는지 확인하자(node_cpu_seconds_total 등)  
 
 
 
