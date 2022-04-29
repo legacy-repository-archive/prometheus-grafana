@@ -108,4 +108,53 @@ http://localhost:9090/metrics 에서도 확인할 수 있듯이.
 프로메테우스가 자체적으로 내보내는 메트릭에는   
 `promhttp_metric_handler_requests_total`(프로메테우스 서버가 /metrics 요청을 서빙한 횟수) 메트릭이 있다.  
 
+```
+promhttp_metric_handler_requests_total
+```  
+표현식 콘솔에 위와 같이 입력해보자.     
+이렇게 하면 promhttp_metric_handler_requests_total 이란      
+이름을 가진 여러가지 시계열이 반환될 건데, 레이블은 모두 다를거다(시계열 데이터마다 최신 기록값을 가지고 있다.)    
+이 레이블들은 각자 다른 요청 상태 나타낸다.  
+
+HTTP 코드 200 으로 떨어지는 요청에만 관심 있다면 아래 쿼리로 검색하면 된다.  
+
+```sql
+promhttp_metric_handler_requests_total{code="200"}    
+``` 
+반환된 시계열의 갯수는 다음과 같이 조회할 수 있다.   
+
+```sql
+count(promhttp_metric_handler_requests_total). 
+```  
+표현식 언어에 대한 자세한 내용은 표현식 언어 문서를 참고하자.  
+
+## Using the graphing interface 
+  
+표현식을 그래프로 그려보려면 http://localhost:9090/graph 로 이동해서 "Graph" 탭을 클릭해라.     
+    
+예를 들어서 자체로 스크랩한 프로메테우스 지표에서,      
+상태 코드 200을 반환하는 HTTP 요청 수를 초 단위로 그려보려면 아래 표현식을 입력해라.     
+
+```
+rate(promhttp_metric_handler_requests_total{code="200"}[1m])  
+``` 
+
+그래프 range 파라미터나 다른 설정으로 여러가지 실험을 해봐도 좋다.  
+
+## Monitoring other targets 
+
+프로메테우스로 메트릭 정보를 수집해보는 것만으로는 프로메테우스가 가진 모든 기능을 다 알아봤다고 할 수 있다.   
+프로메테우스로 할 수 있는 일을 더 알아보려면 다른 익스포터 관련 문서를 살펴보는게 좋다.     
+처음이라면 노드 익스포터를 이용해 Linux/macOS 호스트 메트릭 모니터링하기 가이드로 시작해보는 것도 좋다.  
+
+## Summary 
+
+프로메테우스를 설치하고, 프로메테우스 인스턴스 하나를 설정해 리소스를 모니터링해보고,   
+프로메테우스의 expression 브라우저에서 시계열 데이터를 다뤄보며 몇가지 기본기를 익혔다.   
+계속해서 프레메테우스를 알아보려면 다음 [Overview](https://godekdls.github.io/Prometheus/overview/) 에서 찾아보자.   
+
+
+
+
+
 
