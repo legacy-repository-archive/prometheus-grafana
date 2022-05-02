@@ -142,8 +142,73 @@ scrape_configs:
 설정을 완료하고, expression 브라우저로 돌아가보자.   
 이제 프로메테우스에 위 예제 엔드포인트들에서 노출하는 시계열 정보가 있는지 확인하자(node_cpu_seconds_total 등)  
 
+# Configure rules for aggregating scraped data into new time series  
+ 
+이 예제에선 별 문제 없지만, 시계열 수천개를 집계하는 쿼리를 애드혹으로 계산한다면 지연이 생길 수 있다.     
+프로메테우스에선 recording rule 설정을 통해 표현식을      
+새로운 시계열로 미리 기록하고 저장해둘 수 있어 더 효율적이다.   
 
+5분짜리 윈도우로 인스턴스마다 모든 CPU의 초당 평균 CPU 시간(node_cpu_seconds_total)을 기록하고자 한다고 해보자.   
+(단, job, instance, mode 차원은 유지) 
 
+```
+avg by(job, instance, mode) (rate(node_cput_seconds_total[5ms]))
+```
+  
+이 표현식으로 만들어지는 시계열을  
+`job_instance_mode:node_cpu_seconds:avg_rate5m` 이란 새 메트릭에 기록하려면   
+아래 있는 recording rule 을 `prometheus.rules.yml` 파일로 저장해라 
+
+```yml
+groups:
+- name: cpu-node
+  rules:
+  - record: job_instance_mode:node_cpu_seconds:avg_rate5m
+    expr: avg by (job, instance, mode) (rate(node_cpu_seconds_total[5m]))
+```
+
+이후 새로 만든 rule 을 프로메테우스에서 사용하도록 만들려면 `prometheus.yml` 에 `rule_files` 구문을 추가해야 한다.   
+
+```yml
+global:
+  scrape_interval:     15s # 기본적으로 타겟을 15초마다 스크랩한다.
+  evaluation_interval: 15s # rule을 15초마다 평가한다.
+
+  # 이 프로메테우스 인스턴스가 수집하는 모든 시계열에 이 레이블들을 별도로 첨가한다.
+  external_labels:
+    monitor: 'codelab-monitor'
+
+# 추가됨 
+rule_files:
+  - 'prometheus.rules.yml'
+
+scrape_configs:
+  - job_name: 'prometheus'
+
+    # 글로벌로 설정해둔 기본값을 재정의하며, 이 job에선 타겟을 5초 간격으로 스크랩한다.
+    scrape_interval: 5s
+
+    static_configs:
+      - targets: ['localhost:9090']
+
+  - job_name:       'node'
+
+    # 글로벌로 설정해둔 기본값을 재정의하며, 이 job에선 타겟을 5초 간격으로 스크랩한다.
+    scrape_interval: 5s
+
+    static_configs:
+      - targets: ['localhost:8080', 'localhost:8081']
+        labels:
+          group: 'production'
+
+      - targets: ['localhost:8082']
+        labels:
+          group: 'canary'
+```
+
+새 설정으로 프로메테우스를 다시 시작하고,   
+메트릭 이름이 `job_instance_mode:node_cpu_seconds:avg_rate5m` 인 새 시계열 데이터가 있는지   
+expression 브라우저를 통해 질의해보거나 그래프로 볼 수 있다.  
 
 
 
