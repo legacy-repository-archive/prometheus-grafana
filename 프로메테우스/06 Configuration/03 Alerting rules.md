@@ -75,11 +75,26 @@ groups:
       description: "{{ $labels.instance }} has a median request latency above 1s (current value: {{ $value }}s)"
 ```
 
+## Inspecting alerts during runtime   
+   
+어떤 alert 가 활성 상태인지(보류 또는 시행 상태) 직접 확인하고 싶다면,         
+프로메테우스 인스턴스에서 `Alerts` 탭으로 이동하면 된다.       
+이 화면에선 정의된 alert 중에서 현재 활성화돼있는 alert 의 정확한 레이블 셋을 확인할 수 있다.  
+ 
+프로메테우스는 보류나 시행중인 alert가 있다면   
+`ALERTS{alertname="<alert name>", alertstate="<pending or firing>", <additional alert labels>}`   
+형식으로 별도 시계열을 저장한다.       
+      
+alert 가 활성 상태에 있다면(보류 pending 또는 시행 firiring)       
+해당 샘플 값은 1로 설정하며, 더 이상 활성 상태가 아니면 stale로 마킹한다.        
 
+## Sending alert notifications   
 
-
-
-
-
-
-
+프로메테우스의 `alerting rule` 은 지금 당장 무엇이 고장났는지 파악하지는 좋지만,    
+완전한 통지 솔루션이라곤 할 수 없다.  
+간단한 alert 정의 위에 요약, 통지 속도 제한, silencing, alert 의 존성을 추가하려면 다른 계층이 하나 더 필요하다.   
+프로메테우스 생태계에서는 Alertmanager 가 이 역할을 담당한다.   
+따라서 프로메테우스는 alert 상태에 대한 정보를 주기적으로 Alertmanager 인스턴스로 보내도록 구성할 수 있다.    
+그러면 Alertmanager 인스턴스가 이어서 제대로 된 통지를 발송한다.    
+   
+프로메테우스는 서비스 디스커버리 통합 기능을 이용해 가능한 Alertmanager 인스턴스를 자동으로 발견하도록 설정할 수 있다.   
