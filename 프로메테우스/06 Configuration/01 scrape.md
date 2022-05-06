@@ -1,5 +1,4 @@
-# Configuration 
-## Scrape
+# Scrape
 
 프로메테우스 설정은 **`커맨드라인 플래그`와 `설정 파일`을 이용한다.**    
 
@@ -16,7 +15,7 @@
 (`--web.enable-lifecycle` 플래그를 활성화한 경우) 설정을 다시 로드할 수 있다.    
 이렇게하면 설정해둔 rule 파일도 전부 다시 로드한다.     
 
-### Configuration file
+## Configuration file
   
 **로드할 설정 파일을 지정할 땐 `--config.file` 플래그를 사용한다.**     
 설정 파일은 YAML 형식으로 저장하며 아래에서 설명하는 스키마로 정의한다.   
@@ -95,7 +94,7 @@ storage:
   [ - <exemplars> ... ]
 ```
 
-### `<scrape_config>`  
+## `<scrape_config>`  
 `scrape_config` 엔 스크랩할 타겟들과, 스크랩할 방법을 묘사하는 파라미터들을 지정한다.      
 보통은 스크랩 설정 하나로 job 하나를 지정한다.    
 복잡한 설정을 추가할 땐 달라질 수 있다.    
