@@ -38,6 +38,45 @@ groups:
 `annotations` 절에 alert 설명이나 런북 링크같이, 좀 더 긴 부가 정보를 저장할 수 있는 정보성 레이블 셋을 지정한다.   
 애노테이션 값은 탬플릿을 사용해 지정할 수 있다.   
 
+## templating 
+
+레이블과 애노테이션 값은 `콘솔 템플릿`을 이용해 템플릿화할 수 있다.           
+`$labels` 변수는 alert 인스턴스의 레이블 키/값 쌍을 가지고 있다.             
+설정해둔 외부 레이블은 `$externalLabels` 변수를 통해 접근할 수 있다.           
+`$value` 변수는 alert 인스턴스의 평가 값을 가지고 있다.     
+
+```
+# 시행 중인 요소의 레이블 값을 삽입하려면:
+{{ $labels.<labelname> }}
+# 시행 중인 요소의 표현식 결과값(숫자)을 삽입하려면:
+{{ $value }}
+```
+```yml
+groups:
+- name: example
+  rules:
+
+  # 5분 이상 연결되지 않는 인스턴스를 잡아내는 alert.
+  - alert: InstanceDown
+    expr: up == 0
+    for: 5m
+    labels:
+      severity: page
+    annotations:
+      summary: "Instance {{ $labels.instance }} down"
+      description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+
+  # 요청 지연 시간 중앙값(median)이 1초를 넘는 인스턴스를 잡아내는 alert.
+  - alert: APIHighRequestLatency
+    expr: api_http_request_latencies_second{quantile="0.5"} > 1
+    for: 10m
+    annotations:
+      summary: "High request latency on {{ $labels.instance }}"
+      description: "{{ $labels.instance }} has a median request latency above 1s (current value: {{ $value }}s)"
+```
+
+
+
 
 
 
