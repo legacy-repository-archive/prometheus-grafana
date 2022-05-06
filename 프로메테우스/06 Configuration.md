@@ -347,10 +347,88 @@ promtool check rules /path/to/example.rules.yml
 
 ### Recording rules
 
+Recording rule 을 사용하면 자주 필요한 표현식이나 계산 비용이 큰 표현식을   
+미리 계산해서 그 결과를 별도 시계열 셋으로 저장해둘 수 있다.    
+
+Recording rule, altering rule 은 rule 그룹 내에 존재한다.   
+같은 그룹내에 있는 rule은 모두 함께 평가되며, 일정한 간격을 두고 순차적으로 실행된다.    
+Recording rule 의 이름엔 [유효한 메트릭명](https://godekdls.github.io/Prometheus/data-model/#metric-names-and-labels)을 사용해야하며,    
+altering rule의 이름엔 [유효한 레이블값](https://godekdls.github.io/Prometheus/data-model/#metric-names-and-labels)이 사용되어야 한다.   
 
 
+**구문(틀)**
+```yml
+groups:
+  [ - <rule_group> ]
+```
+룰 파일의 구문은 위와 같다.  
 
+**예시**
+```yml
+groups:
+  - name: example
+    rules:
+    - record: job:http_inprogress_requests:sum
+      expr: sum by (job) (http_inprogress_requests)
+```
 
+### `<rule_group>`
+
+```yml
+<rule_group>
+# 그룹명. 이 파일 내에서 유니크해야 한다.
+name: <string>
+
+# 이 그룹에 있는 rule들을 평가할 간격.
+[ interval: <duration> | default = global.evaluation_interval ]
+
+# alerting rule이 생성할 수 있는 alert 갯수와 recording rule이 생성할 수 있는 시계열 갯수를 제한한다.
+# 0은 제한이 없음을 의미한다.
+[ limit: <int> | default = 0 ]
+
+rules:
+  [ - <rule> ... ]
+```
+
+### `<rule>` 
+#### Recording rule  
+
+```yml
+# 출력할 시계열 데이터 이름. 유효한 메트릭명을 지정해야 한다.
+record: <string>
+
+# 평가할 PromQL 표현식.
+# 매 평가 주기마다 현재 시간을 기준으로 평가하고 새 시계열 셋에 기록한다.
+# 메트릭명은 'record'에 지정한 이름을 사용한다.
+expr: <string>
+
+# 결과를 저장하기 전 추가하거나 덮어쓸 레이블.
+labels:
+  [ <labelname>: <labelvalue> ]
+```
+#### altering_rul  
+
+```yml
+# alert 이름. 유효한 레이블 값을 지정해야 한다.
+alert: <string>
+
+# 평가할 PromQL 표현식.
+# 매 평가 주기마다 현재 시간을 기준으로 평가하며,
+# 평가 결과는 alert 시계열에 보류 (pending) 또는 시행 상태(firing)로 저장한다.
+expr: <string>
+
+# 이 기간 동안 alert가 지속해서 반환된다면 시행(firing)되는 것으로 간주한다.
+# 이 기간이 지났음에도 시행되지 않은 alert는 보류(pending) 중인 것으로 간주한다.
+[ for: <duration> | default = 0s ]
+
+# 각 alert에 추가하거나 덮어쓸 레이블.
+labels:
+  [ <labelname>: <tmpl_string> ]
+
+# 각 alert에 추가할 애노테이션.
+annotations:
+  [ <labelname>: <tmpl_string> ]
+```
 
 
 
