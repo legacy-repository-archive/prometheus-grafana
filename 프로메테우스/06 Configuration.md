@@ -326,6 +326,33 @@ metric_relabel_configs:
 
 ## Recording rules
 
+프로메테우스에선 `recording rule` 과 `alerting rule` 두 타입의 rule 을 설정한 뒤 일정한 간격으로 평가할 수 있다.    
+프로메테우스에 rule을 추가할 땐,   
+필요한 rule 구문을 담고 있는 파일(YAML)을 만들어 프로메테우스 설정에서 `rule_files` 필드를 통해 로드하면 된다.     
+
+rule 파일은 프로메테우스 프로세스에 SIGHUP 을 전송하면 런타임에 다시 로드할 수 있다.   
+변경사항은 모든 rule 파일 포맷에 문제가 없을 때만 반영된다.   
+
+### Syntax-checking rule
+
+프로메테우스 커맨드라인 유틸리티 툴 `promtool` 을 사용하면  
+프로메테우스 서버를 시작해보지 않아도 rule 파일 구문을 바로 검증해볼 수 있다.    
+
+```shell
+promtool check rules /path/to/example.rules.yml
+```
+`promtool` 바이너리 파일은 prometheus 아카이브에 포함되 있다.   
+파일이 구문상 문제가 없으면 표준 출력에 파싱한 rule 들을 텍스트로 찍은 다음 종료 상태 `0` 을 리턴하고 종료한다.    
+구문 오류가 있거나 입력 인자가 올바르지 않으면 stderr에 에러 메시지를 출력하고 종료 상태 1과 함께 종료한다.   
+
+### Recording rules
+
+
+
+
+
+
+
 
 
 
