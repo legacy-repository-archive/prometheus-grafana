@@ -430,9 +430,9 @@ annotations:
   [ <labelname>: <tmpl_string> ]
 ```
 
+### LIMITING ALTERTS AND SERIES 
 
-
-
-
-
-
+altering rule 로 만들어지는 alert와 recording rule 로 만들어지는 시계열에는 그룹별로 제한치를 설정할 수 있다.       
+이 제한치를 초과하면 rule 로 생성하는 모든 시계열을 폐기하며,     
+altering rule 에선 해당 rule로 생성하는 모든 active, pending, inactive alert 를 정리한다.     
+평가 중에 이 이벤트가 발생하면 에러로 기록되기 때문에 stale 마커도 작성하지 않는다.      
