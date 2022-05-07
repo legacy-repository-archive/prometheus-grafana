@@ -126,3 +126,106 @@ eval_time: <duration>
 exp_samples:
   [ - <sample> ]
 ```
+
+### `<sample>`
+
+```shell
+# 샘플 레이블은 평상시 사용하는 시계열 표기법 '<metric name>{<label name>=<label value>, ...}'를 따른다.
+# 예시:
+#      series_name{label1="value1", label2="value2"}
+#      go_goroutines{job="prometheus", instance="localhost:9090"}
+labels: <string>
+
+# PromQL 표현식의 기대값.
+value: <number>
+```
+
+## Example
+
+통과하는 단위 테스트들을 담고 있는 예제 입력 파일이다.     
+`test.yml`은 위에서 설명한 구문을 따르는 테스트 파일이며       
+`alerts.yml`에는 alertingrule이 담겨 있다.     
+
+같은 디렉토리에 `alerts.yml`을 저장하고 `./promtool test rules test.yml`을 실행하면 된다.   
+
+### test.yml
+
+```yml
+# 이 파일이 단위 테스트에서 메인으로 사용하는 입력 파일이다.
+# 커맨드라인 인자로는 이 파일만 전달한다.
+
+rule_files:
+    - alerts.yml
+
+evaluation_interval: 1m
+
+tests:
+    # Test 1.
+    - interval: 1m
+      # 시계열 데이터
+      input_series:
+          - series: 'up{job="prometheus", instance="localhost:9090"}'
+            values: '0 0 0 0 0 0 0 0 0 0 0 0 0 0 0'
+          - series: 'up{job="node_exporter", instance="localhost:9100"}'
+            values: '1+0x6 0 0 0 0 0 0 0 0' # 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0
+          - series: 'go_goroutines{job="prometheus", instance="localhost:9090"}'
+            values: '10+10x2 30+20x5' # 10 20 30 30 50 70 90 110 130
+          - series: 'go_goroutines{job="node_exporter", instance="localhost:9100"}'
+            values: '10+10x7 10+30x4' # 10 20 30 40 50 60 70 80 10 40 70 100 130
+
+      # alerting rule을 위한 단위 테스트.
+      alert_rule_test:
+          # Unit test 1.
+          - eval_time: 10m
+            alertname: InstanceDown
+            exp_alerts:
+                # Alert 1.
+                - exp_labels:
+                      severity: page
+                      instance: localhost:9090
+                      job: prometheus
+                  exp_annotations:
+                      summary: "Instance localhost:9090 down"
+                      description: "localhost:9090 of job prometheus has been down for more than 5 minutes."
+      # promql 표현식을 위한 단위 테스트.
+      promql_expr_test:
+          # Unit test 1.
+          - expr: go_goroutines > 5
+            eval_time: 4m
+            exp_samples:
+                # Sample 1.
+                - labels: 'go_goroutines{job="prometheus",instance="localhost:9090"}'
+                  value: 50
+                # Sample 2.
+                - labels: 'go_goroutines{job="node_exporter",instance="localhost:9100"}'
+                  value: 50
+```
+
+### alerts.yml
+
+```yml
+# 이 파일은 rule들을 담고 있는 파일이다.
+
+groups:
+- name: example
+  rules:
+
+  - alert: InstanceDown
+    expr: up == 0
+    for: 5m
+    labels:
+        severity: page
+    annotations:
+        summary: "Instance {{ $labels.instance }} down"
+        description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+
+  - alert: AnotherInstanceDown
+    expr: up == 0
+    for: 10m
+    labels:
+        severity: page
+    annotations:
+        summary: "Instance {{ $labels.instance }} down"
+        description: "{{ $labels.instance }} of job {{ $labels.job }} has been down for more than 5 minutes."
+```
+
