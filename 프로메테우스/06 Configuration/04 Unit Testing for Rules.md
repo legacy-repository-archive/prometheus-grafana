@@ -82,3 +82,47 @@ series: <string>
 #     3. ' 1 _x3 stale'은 '1 _ _ _ stale'과 동일하다
 values: <string>
 ```
+
+### `<alert_test_case>`
+  
+프로메테우스에선 여러 alerting rule이 동일한 alert 이름을 사용할 수 있디.      
+따라서 여기에선 특정 alert 이름에서 시행되는 모든 alert를 하나의 `<alert_test_case>` 로 통합해서 나열해야한다.     
+
+```shell
+# 0초부터 시작해서 이 시간만큼 경과했을 때의 데이터로 alert를 체크한다.
+eval_time: <duration>
+
+# 테스트할 alert 이름
+alertname: <string>
+
+# 지정한 평가 시간에 지정한 alert 이름에서 시행할 것으로 예상하는 alert 목록.
+# alerting rule이 시행되지 않는 것을 테스트하고 싶다면
+# 위 필드들만 지정하고 'exp_alerts'를 비워 두면 된다.
+exp_alerts:
+  [ - <alert> ]
+```
+
+### `<alert>`  
+
+```shell
+# 예상 alert에 첨부되는 레이블과 애노테이션들.
+# 참고: 레이블은 alert를 활성화한 샘플의 레이블도 포함이다 (`/alerts` 페이지에서 볼 수 있는 레이블과 동일하며, 시계열 `__name__`과 `alertname` 레이블은 제외다).
+exp_labels:
+  [ <labelname>: <string> ]
+exp_annotations:
+  [ <labelname>: <string> ]
+```
+ 
+### `<promql_test_case>`
+
+```shell
+# 평가할 표현식
+expr: <string>
+
+# 0초부터 시작해서 이 시간만큼 경과했을 때의 데이터로 표현식을 평가한다.
+eval_time: <duration>
+
+# 지정한 평가 시간에 예상하는 샘플들.
+exp_samples:
+  [ - <sample> ]
+```
