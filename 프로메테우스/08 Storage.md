@@ -62,3 +62,8 @@ WAL 파일은 `wal` 디렉토리에 128MB 세그먼트들로 나뉘어 저장된
 
 파일 형식에 관한 자세한 내용은 [TDSB 포맷](https://github.com/prometheus/prometheus/blob/release-2.32/tsdb/docs/format/README.md) 참고하라
 
+## Compaction
+        
+처음에 만들었던 2시간짜리 블록은 시간이 지나면 **백그라운드에서 좀 더 긴 블록으로 압축된다.**           
+컴팩션을 마치면 보존 시간의 10% 나 31일 중 더 작은 기간에 속하는 데이터들을 가지는 더 큰 블록이 만들어진다.  
+
