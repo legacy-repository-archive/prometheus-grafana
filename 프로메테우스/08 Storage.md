@@ -54,8 +54,11 @@ WAL 파일은 `wal` 디렉토리에 128MB 세그먼트들로 나뉘어 저장된
      
 로컬 스토리지를 이용할 때는 **클러스터링이나 복제가 불가능하다는 제약이 있다.**             
 **따라서 드라이브나 노드가 중단되면 자체적으로 확장하거나 내구성을 보장할 수 없으며, 단일 노드 데이터베이스처럼 관리해야 한다.**       
-스토리지 가용성을 위해선 RAID 를 사용하고, 스냅샷을 통해 백업해두는 것을 권장한다.   
+스토리지 가용성을 위해선 RAID 를 사용하고, 스냅샷을 통해 백업해두는 것을 권장한다.         
+적절한 아키텍처만 적용해주면 로컬 스토리지에 수년간의 데이터를 보관할 수 있다.      
+   
+아니면 [remote read/write api](https://godekdls.github.io/Prometheus/integrations/#remote-endpoints-and-storage)를 통해 외부 저장소를 사용할 수도 있다.       
+이런 시스템들은 내구성이나 성능 효율성 면에서 크게 갈리기 때문에 신중하게 평가하고 사용해야한다.  
 
-
-
+파일 형식에 관한 자세한 내용은 [TDSB 포맷](https://github.com/prometheus/prometheus/blob/release-2.32/tsdb/docs/format/README.md) 참고하라
 
